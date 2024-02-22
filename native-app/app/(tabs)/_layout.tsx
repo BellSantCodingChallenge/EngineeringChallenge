@@ -46,6 +46,10 @@ export default function TabLayout() {
     },
     {
       name: 'three',
+      options: { title: 'History', tabBarIcon: ({ color }) => <TabBarIcon name="bar-chart" color={color} /> },
+    },
+    {
+      name: 'four',
       options: { title: 'Account', tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} /> },
     },
   ];

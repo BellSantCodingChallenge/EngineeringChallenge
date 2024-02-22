@@ -1,8 +1,13 @@
-import {useState, useEffect, useMemo, useCallback} from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
+import { useSession } from './session';
+
+const apiUrl: string = `${process.env.API_URL}/machine`;
 
 export const useMachineData = () => {
   const [machineData, setMachineData] = useState(undefined);
+  const { session } = useSession();
 
   useEffect(() => {
     // Load machine data from local storage when the hook initializes
@@ -38,13 +43,20 @@ export const useMachineData = () => {
     }
   }, []);
 
-  const updateMachineData = useCallback(async (newMachineData) => {
+  const updateMachineData = useCallback(async newMachineData => {
     try {
       // Update the state with the new machine data
       setMachineData(newMachineData);
 
       // Persist the updated machine data to local storage
       await AsyncStorage.setItem('machineData', JSON.stringify(newMachineData));
+
+      // save historical data
+      const body = {
+        machines: newMachineData.machines,
+        user: JSON.parse(session).user,
+      };
+      await axios.post(apiUrl, body);
     } catch (error) {
       console.error(error);
       // Handle storage saving error
@@ -52,7 +64,7 @@ export const useMachineData = () => {
   }, []);
 
   const setScores = useCallback(
-    async (newScores) => {
+    async newScores => {
       try {
         if (!machineData) {
           return;
@@ -66,16 +78,13 @@ export const useMachineData = () => {
         setMachineData(newMachineData);
 
         // Persist the updated machine data to local storage
-        await AsyncStorage.setItem(
-          'machineData',
-          JSON.stringify(newMachineData),
-        );
+        await AsyncStorage.setItem('machineData', JSON.stringify(newMachineData));
       } catch (error) {
         console.error(error);
         // Handle storage saving error
       }
     },
-    [machineData],
+    [machineData]
   );
 
   return {

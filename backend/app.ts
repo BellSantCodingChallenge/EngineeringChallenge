@@ -1,5 +1,5 @@
-import express, {Request, Response} from 'express';
-import {getMachineHealth} from './machineHealth';
+import express from 'express';
+import { GetMachineHealth, PostMachine, PostMachineHealth } from './routes/machine/routes';
 
 const app = express();
 const port = 3001;
@@ -8,14 +8,9 @@ const port = 3001;
 app.use(express.json());
 
 // Endpoint to get machine health score
-app.post('/machine-health', (req: Request, res: Response) => {
-  const result = getMachineHealth(req);
-  if (result.error) {
-    res.status(400).json(result);
-  } else {
-    res.json(result);
-  }
-});
+app.post('/machine', PostMachine);
+app.post('/machine-health', PostMachineHealth);
+app.get('/machine-health', GetMachineHealth);
 
 app.listen(port, () => {
   console.log(`API is listening at http://localhost:${port}`);

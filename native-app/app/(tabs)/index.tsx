@@ -3,7 +3,7 @@ import { Text, View } from '../../components/Themed';
 import { Link, useFocusEffect } from 'expo-router';
 import axios from 'axios';
 import { useMachineData } from '../useMachineData';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { PartsOfMachine } from '../../components/PartsOfMachine';
 import { MachineScore } from '../../components/MachineScore';
 
@@ -11,7 +11,6 @@ let apiUrl: string = 'https://fancy-dolphin-65b07b.netlify.app/api/machine-healt
 
 if (__DEV__) {
   apiUrl = process.env.API_URL || `http://${Platform?.OS === 'android' ? '10.0.2.2' : 'localhost'}:3001/machine-health`;
-  console.log('API URL', { apiUrl });
 }
 
 export default function StateScreen() {

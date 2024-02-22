@@ -1,13 +1,15 @@
-import { StyleSheet } from 'react-native';
+import { Button, StyleSheet } from 'react-native';
 
-import EditScreenInfo from '../../components/EditScreenInfo';
 import { View } from '../../components/Themed';
+import { useSession } from '../session';
 
-export default function TabTwoScreen() {
+export default function LogPartScreen() {
+  const { signOut } = useSession();
+
   return (
     <View style={styles.container}>
       <View style={styles.separator} />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
+      <Button title="Sign Out" onPress={() => signOut()} />
     </View>
   );
 }

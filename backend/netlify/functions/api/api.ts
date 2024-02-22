@@ -1,6 +1,6 @@
-import express, {Router} from 'express';
+import express, { Router } from 'express';
 import serverless from 'serverless-http';
-import {getMachineHealth} from '../../../machineHealth';
+import { getMachineHealth } from '../../../routes/machine/machineHealth';
 
 const api = express();
 

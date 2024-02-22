@@ -1,4 +1,4 @@
-import {Request} from 'express';
+import { Request } from 'express';
 import {
   AssemblyLinePart,
   MachineType,
@@ -6,10 +6,15 @@ import {
   QualityControlStationPart,
   WeldingRobotPart,
   partInfo,
-} from '../native-app/data/types';
-import {calculateMachineHealth} from './calculations';
+} from '../../../native-app/data/types';
+import { calculateMachineHealth } from '../../calculations';
 
-export const getMachineHealth = (req: Request) => {
+export type Machines = Record<
+  MachineType,
+  Record<WeldingRobotPart | AssemblyLinePart | PaintingStationPart | QualityControlStationPart, string>
+>;
+
+export const getMachineHealth = (machines: Machines) => {
   /* Assuming the request body contains the machine's name and parts data in the format of
   {
     "machines": {
@@ -23,24 +28,6 @@ export const getMachineHealth = (req: Request) => {
     }
   }
   */
-  const {
-    machines,
-  }: {
-    machines: Record<
-      MachineType,
-      Record<
-        | WeldingRobotPart
-        | AssemblyLinePart
-        | PaintingStationPart
-        | QualityControlStationPart,
-        string
-      >
-    >;
-  } = req.body;
-
-  if (!machines) {
-    return {error: 'Invalid input format'};
-  }
 
   const machineScores: {
     [key in MachineType]?: string;
@@ -51,26 +38,19 @@ export const getMachineHealth = (req: Request) => {
   // Calculate scores for each machine
   for (const machineName in machines) {
     const machine = machines[machineName as MachineType] as Record<
-      | WeldingRobotPart
-      | AssemblyLinePart
-      | PaintingStationPart
-      | QualityControlStationPart,
+      WeldingRobotPart | AssemblyLinePart | PaintingStationPart | QualityControlStationPart,
       string
     >;
     const machineScore = calculateMachineHealth(
       machineName as MachineType,
       Object.keys(machine).reduce((parts: partInfo[], partName) => {
-        const partNameTyped = partName as
-          | WeldingRobotPart
-          | AssemblyLinePart
-          | PaintingStationPart
-          | QualityControlStationPart;
+        const partNameTyped = partName as WeldingRobotPart | AssemblyLinePart | PaintingStationPart | QualityControlStationPart;
         parts.push({
           name: partNameTyped,
           value: parseFloat(machine[partNameTyped]),
         });
         return parts;
-      }, []),
+      }, [])
     );
 
     machineScores[machineName as MachineType] = machineScore.toFixed(2);

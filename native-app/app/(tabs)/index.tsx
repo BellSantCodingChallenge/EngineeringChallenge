@@ -10,7 +10,8 @@ import { MachineScore } from '../../components/MachineScore';
 let apiUrl: string = 'https://fancy-dolphin-65b07b.netlify.app/api/machine-health';
 
 if (__DEV__) {
-  apiUrl = process.env.API_URL || `http://${Platform?.OS === 'android' ? '10.0.2.2' : 'localhost'}:3001/machine-health`;
+  const url = process.env.API_URL || `http://${Platform?.OS === 'android' ? '10.0.2.2' : 'localhost'}:3001`;
+  apiUrl = `${url}/machine-health`;
 }
 
 export default function StateScreen() {

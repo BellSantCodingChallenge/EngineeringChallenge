@@ -1,42 +1,43 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Platform, StyleSheet, TextInput} from 'react-native';
+// Importing necessary modules and components
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Text } from './Themed'; // Importing the Themed Text component for consistent styling
 
-import {Text, View} from './Themed';
-import axios from 'axios';
-import Constants from 'expo-constants';
-import RNPickerSelect from 'react-native-picker-select';
-import machineData from '../data/machineData.json';
-import {MachineType} from '../data/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useMachineData} from '../app/useMachineData';
-import {useFocusEffect} from 'expo-router';
-
-export const PartsOfMachine = ({
+/**
+ * Component for displaying parts of a machine.
+ * @param {Object} props - Component properties.
+ * @returns {JSX.Element} - Rendered PartsOfMachine component.
+ */
+export const PartsOfMachine = ( {
   machineName,
   parts,
 }: {
   machineName: string;
   parts: Record<string, string>;
-}) => {
+} ) => {
   return (
     <>
-      {parts && (
+      {/* Render the parts only if they exist */ }
+      { parts && (
         <>
-          <Text style={styles.title}>{machineName}</Text>
-          {Object.keys(parts).map((key) => (
-            <Text key={key}>
-              {key}: {parts[key]}
+          {/* Display the machine name as a title */ }
+          <Text style={ styles.title }>{ machineName }</Text>
+          {/* Map through the parts object and display each part and its value */ }
+          { Object.keys( parts ).map( ( key ) => (
+            <Text key={ key }>
+              { key }: { parts[ key ] }
             </Text>
-          ))}
+          ) ) }
         </>
-      )}
+      ) }
     </>
   );
 };
 
-const styles = StyleSheet.create({
+// Styles for the PartsOfMachine component
+const styles = StyleSheet.create( {
   title: {
     fontSize: 20,
     fontWeight: 'bold',
   },
-});
+} );

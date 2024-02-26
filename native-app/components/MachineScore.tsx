@@ -1,36 +1,37 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import {Button, Platform, StyleSheet, TextInput} from 'react-native';
+// Importing necessary modules and components
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Text } from './Themed'; // Importing the Themed Text component for consistent styling
+import { machineNames } from '../data/types'; // Importing machineNames from the types file
 
-import {Text, View} from './Themed';
-import axios from 'axios';
-import Constants from 'expo-constants';
-import RNPickerSelect from 'react-native-picker-select';
-import machineData from '../data/machineData.json';
-import {MachineType, machineNames} from '../data/types';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useMachineData} from '../app/useMachineData';
-import {useFocusEffect} from 'expo-router';
-
-export const MachineScore = ({
+/**
+ * Component for displaying machine scores.
+ * @param {Object} props - Component properties.
+ * @returns {JSX.Element} - Rendered MachineScore component.
+ */
+export const MachineScore = ( {
   machineName,
   score,
 }: {
   machineName: string;
   score: string;
-}) => {
+} ) => {
   return (
     <>
-      {score && (
+      {/* Render the score only if it exists */ }
+      { score && (
         <>
+          {/* Display the machine name and its corresponding score */ }
           <Text
-            style={styles.text}
-          >{`${machineNames[machineName]}: ${score}`}</Text>
+            style={ styles.text }
+          >{ `${ machineNames[ machineName ] }: ${ score }` }</Text>
         </>
-      )}
+      ) }
     </>
   );
 };
 
-const styles = StyleSheet.create({
-  text: {},
-});
+// Styles for the MachineScore component
+const styles = StyleSheet.create( {
+  text: {}, // You can define styles here if necessary
+} );

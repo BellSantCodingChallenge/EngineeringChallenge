@@ -1,7 +1,9 @@
+// Define the tintColor for light and dark modes
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#fff';
 
-export default {
+// Define the Colors object with light and dark themes
+const Colors = {
   light: {
     text: '#000',
     background: '#fff',
@@ -24,3 +26,6 @@ export default {
     tabIconSelected: tintColorDark,
   },
 };
+
+// Export the Colors object
+export default Colors;

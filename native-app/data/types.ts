@@ -1,3 +1,4 @@
+// Define an enum for machine types
 export enum MachineType {
   WeldingRobot = 'weldingRobot',
   PaintingStation = 'paintingStation',
@@ -41,19 +42,20 @@ export enum QualityControlStationPart {
   CriteriaSettings = 'criteriaSettings',
 }
 
-export type partInfo = {
+// Define a type for part information
+export type PartInfo = {
   name:
-    | WeldingRobotPart
-    | PaintingStationPart
-    | AssemblyLinePart
-    | QualityControlStationPart;
+  | WeldingRobotPart
+  | PaintingStationPart
+  | AssemblyLinePart
+  | QualityControlStationPart;
   value: number;
 };
 
-//Machine enum value to name mapping
-export const machineNames = {
-  [MachineType.WeldingRobot]: 'Welding Robot',
-  [MachineType.PaintingStation]: 'Painting Station',
-  [MachineType.AssemblyLine]: 'Assembly Line',
-  [MachineType.QualityControlStation]: 'Quality Control Station',
+// Machine enum value to name mapping
+export const machineNames: Record<MachineType, string> = {
+  [ MachineType.WeldingRobot ]: 'Welding Robot',
+  [ MachineType.PaintingStation ]: 'Painting Station',
+  [ MachineType.AssemblyLine ]: 'Assembly Line',
+  [ MachineType.QualityControlStation ]: 'Quality Control Station',
 };

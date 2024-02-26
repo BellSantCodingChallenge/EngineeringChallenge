@@ -1,124 +1,120 @@
-import {Button, Platform, StyleSheet} from 'react-native';
-import {Text, View} from '../../components/Themed';
-import {Link, useFocusEffect} from 'expo-router';
+import { Button, Platform, StyleSheet } from 'react-native';
+import { Text, View } from '../../components/Themed';
+import { Link, useFocusEffect } from 'expo-router';
 import axios from 'axios';
-import {useMachineData} from '../useMachineData';
-import {useCallback, useState} from 'react';
-import {PartsOfMachine} from '../../components/PartsOfMachine';
-import {MachineScore} from '../../components/MachineScore';
+import { useMachineData } from '../useMachineData';
+import { useCallback } from 'react';
+import { PartsOfMachine } from '../../components/PartsOfMachine';
+import { MachineScore } from '../../components/MachineScore';
 
-let apiUrl: string =
-  'https://fancy-dolphin-65b07b.netlify.app/api/machine-health';
+// Define color
+const colorPrimaryButton = '#2e78b7';
 
-if (__DEV__) {
-  apiUrl = `http://${
-    Platform?.OS === 'android' ? '10.0.2.2' : 'localhost'
-  }:3001/machine-health`;
+// Define the API port and construct the API URL based on the environment
+const apiPort: string = '3001';
+let apiUrl: string = `${ process.env.API_URL }:${ apiPort }/machine-health`;
+
+if ( __DEV__ ) {
+  const url = process.env.API_URL || `http://${ Platform?.OS === 'android' ? '10.0.2.2' : 'localhost' }`;
+  apiUrl = `${ url }:${ apiPort }/machine-health`;
 }
 
-export default function StateScreen() {
-  const {machineData, resetMachineData, loadMachineData, setScores} =
-    useMachineData();
+/**
+ * Screen component for displaying machine state information.
+ * @returns {JSX.Element} - Rendered StateScreen component.
+ */
+export default function StateScreen () {
+  const { machineData, resetMachineData, loadMachineData, setScores } = useMachineData();
 
-  //Doing this because we're not using central state like redux
+  // Use FocusEffect to load machine data when the screen gains focus
   useFocusEffect(
-    useCallback(() => {
+    useCallback( () => {
       loadMachineData();
-    }, []),
+    }, [] )
   );
 
-  const calculateHealth = useCallback(async () => {
+  // Function to calculate machine health scores
+  const calculateHealth = useCallback( async () => {
     try {
-      const response = await axios.post(apiUrl, {
+      // Send a POST request to the API to calculate health scores
+      const response = await axios.post( apiUrl, {
         machines: machineData?.machines,
-      });
+      } );
 
-      if (response.data?.factory) {
-        setScores(response.data);
+      // Update the state with the calculated scores if successful
+      if ( response.data?.factory ) {
+        setScores( response.data );
       }
-    } catch (error) {
-      console.error(error);
+    } catch ( error ) {
+      // Handle errors during the calculation process
+      console.error( '[index.tsx] Error: ', error );
       console.log(
-        `There was an error calculating health. ${
-          error.toString() === 'AxiosError: Network Error'
-            ? 'Is the api server started?'
-            : error
-        }`,
+        `[index.tsx] There was an error calculating health. ${ error.toString() === 'AxiosError: Network Error'
+          ? 'Is the API server started?'
+          : error
+        }`
       );
     }
-  }, [machineData]);
+  }, [ machineData ] );
 
   return (
-    <View style={styles.container}>
-      <View style={styles.separator} />
-      {!machineData && (
-        <Link href='/two' style={styles.link}>
-          <Text style={styles.linkText}>
-            Please log a part to check machine health
-          </Text>
+    <View style={ styles.container }>
+      <View style={ styles.separator } />
+
+      {/* Display a link to log a part if no machine data is available */ }
+      { !machineData && (
+        <Link href="/two" style={ styles.link }>
+          <Text style={ styles.linkText }>To check the machine health, you must log a part.</Text>
         </Link>
-      )}
-      {machineData && (
+      ) }
+
+      {/* Display machine information and health scores if available */ }
+      { machineData && (
         <>
-          <PartsOfMachine
-            machineName={'Welding Robot'}
-            parts={machineData?.machines?.weldingRobot}
-          />
-          <PartsOfMachine
-            machineName={'Assembly Line'}
-            parts={machineData?.machines?.assemblyLine}
-          />
-          <PartsOfMachine
-            machineName={'Painting Station'}
-            parts={machineData?.machines?.paintingStation}
-          />
-          <PartsOfMachine
-            machineName={'Quality Control Station'}
-            parts={machineData?.machines?.qualityControlStation}
-          />
-          <View
-            style={styles.separator}
-            lightColor='#eee'
-            darkColor='rgba(255,255,255,0.1)'
-          />
-          <Text style={styles.title}>Factory Health Score</Text>
-          <Text style={styles.text}>
-            {machineData?.scores?.factory
-              ? machineData?.scores?.factory
-              : 'Not yet calculated'}
-          </Text>
-          {machineData?.scores?.machineScores && (
+          {/* Display parts information for each machine type */ }
+          <PartsOfMachine machineName={ 'Welding Robot' } parts={ machineData?.machines?.weldingRobot } />
+          <PartsOfMachine machineName={ 'Assembly Line' } parts={ machineData?.machines?.assemblyLine } />
+          <PartsOfMachine machineName={ 'Painting Station' } parts={ machineData?.machines?.paintingStation } />
+          <PartsOfMachine machineName={ 'Quality Control Station' } parts={ machineData?.machines?.qualityControlStation } />
+
+          {/* Display the factory health score */ }
+          <View style={ styles.separator } lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+          <Text style={ styles.title }>Factory Health Score</Text>
+          <Text style={ styles.text }>{ machineData?.scores?.factory ? machineData?.scores?.factory : 'Not yet calculated' }</Text>
+
+          {/* Display machine health scores for individual machines */ }
+          { machineData?.scores?.machineScores && (
             <>
-              <Text style={styles.title2}>Machine Health Scores</Text>
-              {Object.keys(machineData?.scores?.machineScores).map((key) => (
-                <MachineScore
-                  key={key}
-                  machineName={key}
-                  score={machineData?.scores?.machineScores[key]}
-                />
-              ))}
+              <Text style={ styles.title2 }>Machine Health Scores</Text>
+              { Object.keys( machineData?.scores?.machineScores ).map( key => (
+                <MachineScore key={ key } machineName={ key } score={ machineData?.scores?.machineScores[ key ] } />
+              ) ) }
             </>
-          )}
+          ) }
         </>
-      )}
-      <View
-        style={styles.separator}
-        lightColor='#eee'
-        darkColor='rgba(255,255,255,0.1)'
-      />
-      <Button title='Calculate Health' onPress={calculateHealth} />
-      <View style={styles.resetButton}>
-        <Button
-          title='Reset Machine Data'
-          onPress={async () => await resetMachineData()}
-          color='#FF0000'
-        />
+      ) }
+
+      {/* Button to trigger the calculation of machine health scores */ }
+      <View style={ styles.separator } lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
+
+      <View style={ styles.calculateButton }>
+        { // Only show calculate health button if data exists
+          machineData ?
+            <Button color={ colorPrimaryButton } title="Calculate Health" onPress={ calculateHealth } />
+          : null
+        }
+      </View>
+
+      {/* Button to reset machine data */ }
+      <View style={ styles.resetButton }>
+        <Button title="Reset Machine Data" onPress={ async () => await resetMachineData() } color="#FF0000" />
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+// Styles for the StateScreen component
+const styles = StyleSheet.create( {
   container: {
     flex: 1,
     alignItems: 'center',
@@ -142,9 +138,14 @@ const styles = StyleSheet.create({
   },
   linkText: {
     fontSize: 14,
-    color: '#2e78b7',
+    color: colorPrimaryButton,
   },
   resetButton: {
     marginTop: 10,
   },
-});
+  calculateButton: {
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: colorPrimaryButton
+  }
+} );
